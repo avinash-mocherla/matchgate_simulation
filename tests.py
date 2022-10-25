@@ -395,7 +395,7 @@ def plot_staircase():
     # plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     # plt.show()
 
-# Plot trotter circuit for different depths and different number of sites
+# Figure 8
 def test11(save_name, n=5):
 
     
@@ -480,7 +480,7 @@ def general_bound(n,m):
 
 
 
-def plot():
+def plot_Figure8():
     fig, axs = plt.subplots(nrows=3, ncols=2)
     depths5 = np.array([0,1,2,3,4,5,6,7,8,9,10],dtype=int)
     depths10 = np.array([0,1,2,3,4,5,6],dtype=int)
@@ -590,46 +590,48 @@ def plot():
     plt. subplots_adjust(hspace=0.5)   
     plt.show()
 
-plot()
 
 
-# from numba.typed import Dict
-# from numba.core import types
-# def error_vs_rank():
 
-#     n_sites = [2,3,4,5,6,7,8,9,10]
-#     depths = [0,1,2,3,4,5,6]
-#     thresholds = [1e-2,1e-4,1e-6,1e-8]
+from numba.typed import Dict
+from numba.core import types
 
-#     deltas = []
-#     ranks = []
+#Figure 9 
+def error_vs_rank():
 
-#     for n in n_sites:
-#         for d in depths:
+    n_sites = [2,3,4,5,6,7,8,9,10]
+    depths = [0,1,2,3,4,5,6]
+    thresholds = [1e-2,1e-4,1e-6,1e-8]
 
-#             circuit = mod_trotter_circuit(n,d,1,0.3,0.9,1)
-#             simulator = Simulator4(2*n)
-#             measurement_vector =  Dict.empty(
-#                                 key_type=types.int64,
-#                                 value_type=types.float64)
+    deltas = []
+    ranks = []
+
+    for n in n_sites:
+        for d in depths:
+
+            circuit = mod_trotter_circuit(n,d,1,0.3,0.9,1)
+            simulator = Simulator4(2*n)
+            measurement_vector =  Dict.empty(
+                                key_type=types.int64,
+                                value_type=types.float64)
 
         
-#             true_res = simulator.simulate(circuit, verbose =True)
-#             ranks.append((sum(simulator.msm_lengths) + sum(simulator.rho_lengths))/len(circuit))
+            true_res = simulator.simulate(circuit, verbose =True)
+            ranks.append((sum(simulator.msm_lengths) + sum(simulator.rho_lengths))/len(circuit))
 
-#             delta = []
-#             for t in thresholds: 
-#                 # print(n,d,t)
-#                 simulator = Simulator4(2*n)
-#                 approx_res = simulator.simulate(circuit, threshold = t, verbose = True)
-#                 delta.append(np.abs(approx_res - true_res))
-#                 # delta.append(np.abs(approx_res))
+            delta = []
+            for t in thresholds: 
+                # print(n,d,t)
+                simulator = Simulator4(2*n)
+                approx_res = simulator.simulate(circuit, threshold = t, verbose = True)
+                delta.append(np.abs(approx_res - true_res))
+                # delta.append(np.abs(approx_res))
 
-#             deltas.append(delta)
+            deltas.append(delta)
 
-#     lines = np.array(deltas).T
-#     np.save('lines2.npy', lines)
-#     np.save('ranks2.npy', ranks)
+    lines = np.array(deltas).T
+    np.save('lines2.npy', lines)
+    np.save('ranks2.npy', ranks)
 
 
 def plot_error_vs_rank():
@@ -663,11 +665,6 @@ def plot_error_vs_rank():
     plt.yscale('log')
     plt.legend(loc = 'lower right', ncol = 2, fontsize = 'x-large', title = r'Threshold, $\epsilon$', title_fontsize ='x-large')
     plt.show()
-
-# error_vs_rank()
-
-# plot_error_vs_rank()
-
 
 
 def bound_layered3(n,m):
@@ -747,41 +744,73 @@ def layered_bound_largem(n,m):
     t1 = 1/(m+1) * (m- m_mid + 1) * 2**((2*n) - 1) * phi(np.sqrt(8/n)*((m-m_mid+1)/4 +0.5))
     return t1 + t2
 
-for n in range(3,30,4):
-    plt.plot([np.log2(general_scaling(n,m)) for m in range(0,15)], c = 'black')
-    plt.plot([np.log2(general_bound(n,m)) for m in range(0,15)], c = 'blue',ls='--')
-plt.scatter([(int(np.floor(n/2))-1) for n in range(3,30,4)],[np.log2(general_scaling(n,int(np.floor(n/2))-1)) for n in range(3,30,4)], s= 10, c = 'red')
-plt.plot([(int(np.floor(n/2))-1) for n in range(3,30,4)],[np.log2(general_scaling(n,int(np.floor(n/2))-1)) for n in range(3,30,4)], c='red',linestyle='--', label=r'$m_{c}$')
-plt.text(13.5, 5.5, r'n=3', fontsize=14)
-plt.text(13.5, 13.5, r'n=7', fontsize=14)
-plt.text(13.5, 21.5, r'n=11', fontsize=14)
-plt.text(13.5, 29.5, r'n=15', fontsize=14)
-plt.text(13.5, 37.5, r'n=19', fontsize=14)
-plt.text(13.5, 45.5, r'n=23', fontsize=14)
-plt.text(13.5, 53.5, r'n=27', fontsize=14)
 
-handles, labels = plt.gca().get_legend_handles_labels()
+#Figure 5
 
-from matplotlib.lines import Line2D
-import matplotlib.patches as mpatches
+# for n in range(3,30,4):
+#     plt.plot([np.log2(general_scaling(n,m)) for m in range(0,15)], c = 'black')
+#     plt.plot([np.log2(general_bound(n,m)) for m in range(0,15)], c = 'blue',ls='--')
+# plt.scatter([(int(np.floor(n/2))-1) for n in range(3,30,4)],[np.log2(general_scaling(n,int(np.floor(n/2))-1)) for n in range(3,30,4)], s= 10, c = 'red')
+# plt.plot([(int(np.floor(n/2))-1) for n in range(3,30,4)],[np.log2(general_scaling(n,int(np.floor(n/2))-1)) for n in range(3,30,4)], c='red',linestyle='--', label=r'$m_{c}$')
+# plt.text(13.5, 5.5, r'n=3', fontsize=14)
+# plt.text(13.5, 13.5, r'n=7', fontsize=14)
+# plt.text(13.5, 21.5, r'n=11', fontsize=14)
+# plt.text(13.5, 29.5, r'n=15', fontsize=14)
+# plt.text(13.5, 37.5, r'n=19', fontsize=14)
+# plt.text(13.5, 45.5, r'n=23', fontsize=#14)
+# plt.text(13.5, 53.5, r'n=27', fontsize=14)
 
-line1= Line2D([0], [0], label=r'$\chi^{(general)}_{t}$', color='black')
-line2 = Line2D([0], [0], label=r'$\chi^{(bound)}_{t}$', color='blue',ls='--')
-handles.extend([line1,line2])
+# handles, labels = plt.gca().get_legend_handles_labels()
 
-plt.legend(handles=handles,fontsize=12)
-plt.xticks(size=14)
-plt.yticks(size=14)
-plt.xlabel(r'Number of non-matchgates, $m$',fontsize= 14)
-plt.ylabel(r'Total Pauli Rank, $log(\chi_{t})$',fontsize= 14)
-plt.show()
+# from matplotlib.lines import Line2D
+# import matplotlib.patches as mpatches
+
+# line1= Line2D([0], [0], label=r'$\chi^{(general)}_{t}$', color='black')
+# line2 = Line2D([0], [0], label=r'$\chi^{(bound)}_{t}$', color='blue',ls='--')
+# handles.extend([line1,line2])
+
+# plt.legend(handles=handles,fontsize=12)
+# plt.xticks(size=14)
+# plt.yticks(size=14)
+# plt.xlabel(r'Number of non-matchgates, $m$',fontsize= 14)
+# plt.ylabel(r'Total Pauli Rank, $log(\chi_{t})$',fontsize= 14)
+# plt.show()
 
 
-for n in range(3,100,4):
-    plt.plot([np.log2(layered_scaling(n,m)) for m in range(0,n-2)], c = 'red')
-    plt.plot([np.log2(layered_bound(n,m)) for m in range(0,n-2)], c = 'blue')
-plt.scatter([(int(np.floor(n/2))-1) for n in range(3,60,4)],[np.log2(layered_scaling(n,int(np.floor(n/2))-1))for n in range(3,60,4)])
-plt.show()
+# for n in range(3,100,4):
+#     plt.plot([np.log2(layered_scaling(n,m)) for m in range(0,n-2)], c = 'red')
+#     plt.plot([np.log2(layered_bound(n,m)) for m in range(0,n-2)], c = 'blue')
+# plt.scatter([(int(np.floor(n/2))-1) for n in range(3,60,4)],[np.log2(layered_scaling(n,int(np.floor(n/2))-1))for n in range(3,60,4)])
+# plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # def plot_bounds():
 #     fig, axs = plt.subplots(nrows = 3, ncols = 1)
