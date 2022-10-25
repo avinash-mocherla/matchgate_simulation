@@ -8,6 +8,7 @@ from numpy import average
 from simulator import Simulator
 from simulator3 import Simulator3
 from simulator4 import Simulator4
+from simulator5 import Simulator5
 import matplotlib.pyplot as plt
 from circuit import *
 import time 
@@ -25,247 +26,245 @@ import time
 
 
 
-
-# def test12():
+#Figure 6 (Interaction vs Heisenberg)
+def test12():
     
-#     qubits = 10
+    qubits = 10
 
-#     fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize=(15,15))
+    fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize=(15,15))
 
-#     #Plot 1: Low Swaps O(1), Low gates ~ O(1)
+    #Plot 1: Low Swaps O(1), Low gates ~ O(1)
 
-#     N,n,m = 10,qubits,3
+    N,n,m = 10,qubits,3
 
-#     circuit = sparse_layered_circuit(N,n,m, N_layers = 1)
+    circuit = sparse_layered_circuit(N,n,m, N_layers = 1)
 
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     swap_indices = np.where(types=='SWAP')
+    types = np.array([i[0] for i in circuit[::-1]])
+    swap_indices = np.where(types=='SWAP')
 
-#     simulator = Simulator3(N = n)
-#     simulator.simulate(circuit, verbose =  False)
+    simulator = Simulator3(N = n)
+    simulator.simulate(circuit, verbose =  False)
     
-#     simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
+    simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
 
-#     lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
+    lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
 
 
-#     simulator = Simulator2(N = n)
-#     simulator.simulate(circuit, verbose = False)
-    
-
-#     lengths2 = simulator.msm_lengths 
-#     max_len = (len_L(n, m))
-#     plt.rc('axes', labelsize=12)  
-
-#     # for index in swap_indices:
-#     #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
-
-#     # for i in range(m):
-#     #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
-#     # plt.hlines(y = len_L(n_qubits,), xmin = 0, xmax = len(lengths), color = 'darkred', linestyles = 'dashed')
-#     axs[0][0].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
-
-#     axs[0][0].set_title(r'(a)')
-#     axs[0][0].plot(lengths1, color = 'blue', label ='Interaction')
-#     axs[0][0].plot(lengths2, color = 'red', label ='Heisenberg')
-#     axs[0][0].set_ylabel(r'Pauli rank',fontsize = 12)
-#     # axs[0][0].set_xlabel(r'Gate Number',fontsize = 12)
-#     axs[0][0].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
-#     axs[0][0].ticklabel_format(style='scientific', axis='y', scilimits=(0,0))
-#     axs[0][0].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
-#     axs[0][0].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
-#     # axs[0][0].legend()
-#     # plt.show()
-
-#     #Plot 2: Low Swaps O(1), High gates ~ O(N)
-
-    
-#     N,n,m = 10,qubits,3
-
-#     circuit = sparse_layered_circuit(N,n,m, N_layers = 2)
-
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     swap_indices = np.where(types=='SWAP')
-
-#     simulator = Simulator3(N = n)
-#     simulator.simulate(circuit, verbose =  False)
-    
-#     simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
-
-#     lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
-
-#     simulator = Simulator2(N = n)
-#     simulator.simulate(circuit, verbose = False)
+    simulator = Simulator2(N = n)
+    simulator.simulate(circuit, verbose = False)
     
 
-#     lengths2 = simulator.msm_lengths 
+    lengths2 = simulator.msm_lengths 
+    max_len = (len_L(n, m))
+    plt.rc('axes', labelsize=12)  
 
+    # for index in swap_indices:
+    #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
 
-#     max_len = (len_L(n, m))
+    # for i in range(m):
+    #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
+    # plt.hlines(y = len_L(n_qubits,), xmin = 0, xmax = len(lengths), color = 'darkred', linestyles = 'dashed')
+    axs[0][0].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
 
+    axs[0][0].set_title(r'(a)')
+    axs[0][0].plot(lengths1, color = 'blue', label ='Interaction')
+    axs[0][0].plot(lengths2, color = 'red', label ='Heisenberg')
+    axs[0][0].set_ylabel(r'Pauli rank',fontsize = 12)
+    # axs[0][0].set_xlabel(r'Gate Number',fontsize = 12)
+    axs[0][0].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
+    axs[0][0].ticklabel_format(style='scientific', axis='y', scilimits=(0,0))
+    axs[0][0].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
+    axs[0][0].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
+    # axs[0][0].legend()
+    # plt.show()
 
-#     # for index in swap_indices:
-#     #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
-
-#     # for i in range(m):
-#     #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
-#     axs[0][1].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
-
-#     axs[0][1].set_title(r'(b)')
-#     axs[0][1].plot(lengths1, color = 'blue', label ='Interaction')
-#     axs[0][1].plot(lengths2, color = 'red', label ='Heisenberg')
-#     # axs[0][1].set_ylabel(r'Pauli rank',fontsize = 12)
-#     # axs[0][1].set_xlabel(r'Gate Number',fontsize = 12)
-#     axs[0][1].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
-#     axs[0][1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-#     axs[0][1].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
-#     axs[0][1].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
-#     # axs[0][1].legend()
-#     # plt.show()
-#     #Plot 3: High Swaps O(n), Low gates  O(1)
-
-#     N,n,m = 10,qubits,3
-
-#     circuit = sparse_layered_circuit(N,n,m, N_layers = 3)
-
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     swap_indices = np.where(types=='SWAP')
-
-#     simulator = Simulator3(N = n)
-#     simulator.simulate(circuit, verbose =  False)
-    
-
-#     simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
-#     lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
-
-#     simulator = Simulator2(N = n)
-#     simulator.simulate(circuit, verbose = False)
-    
-
-#     lengths2 = simulator.msm_lengths 
-
-
-#     max_len = (len_L(n, m))
-
-#     # for index in swap_indices:
-#     #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
-
-#     # for i in range(m):
-#     #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
-#     axs[1][0].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
-
-#     axs[1][0].set_title(r'(c)')
-#     axs[1][0].plot(lengths1, color = 'blue', label ='Interaction' )
-#     axs[1][0].plot(lengths2, color = 'red', label ='Heisenberg')
-#     axs[1][0].set_ylabel(r'Pauli rank',fontsize = 12)
-#     axs[1][0].set_xlabel(r'Gate Number',fontsize = 12)
-#     axs[1][0].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
-#     axs[1][0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-#     axs[1][0].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
-#     axs[1][0].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
-#     # axs[1][0].legend()
-#     # plt.show()
-
-#     #Plot 4: High Swaps O(1), High gates O(N)
+    #Plot 2: Low Swaps O(1), High gates ~ O(N)
 
     
-#     N,n,m = 10,qubits,3
+    N,n,m = 10,qubits,3
 
-#     circuit = sparse_layered_circuit(N,n,m, N_layers = 4)
+    circuit = sparse_layered_circuit(N,n,m, N_layers = 2)
 
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     swap_indices = np.where(types=='SWAP')
+    types = np.array([i[0] for i in circuit[::-1]])
+    swap_indices = np.where(types=='SWAP')
 
-#     simulator = Simulator3(N = n)
-#     simulator.simulate(circuit, verbose =  False)
+    simulator = Simulator3(N = n)
+    simulator.simulate(circuit, verbose =  False)
+    
+    simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
+
+    lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
+
+    simulator = Simulator2(N = n)
+    simulator.simulate(circuit, verbose = False)
     
 
-#     simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
-#     lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
+    lengths2 = simulator.msm_lengths 
 
-#     simulator = Simulator2(N = n)
-#     simulator.simulate(circuit, verbose = False)
+
+    max_len = (len_L(n, m))
+
+
+    # for index in swap_indices:
+    #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
+
+    # for i in range(m):
+    #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
+    axs[0][1].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
+
+    axs[0][1].set_title(r'(b)')
+    axs[0][1].plot(lengths1, color = 'blue', label ='Interaction')
+    axs[0][1].plot(lengths2, color = 'red', label ='Heisenberg')
+    # axs[0][1].set_ylabel(r'Pauli rank',fontsize = 12)
+    # axs[0][1].set_xlabel(r'Gate Number',fontsize = 12)
+    axs[0][1].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
+    axs[0][1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[0][1].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
+    axs[0][1].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
+    # axs[0][1].legend()
+    # plt.show()
+    #Plot 3: High Swaps O(n), Low gates  O(1)
+
+    N,n,m = 10,qubits,3
+
+    circuit = sparse_layered_circuit(N,n,m, N_layers = 3)
+
+    types = np.array([i[0] for i in circuit[::-1]])
+    swap_indices = np.where(types=='SWAP')
+
+    simulator = Simulator3(N = n)
+    simulator.simulate(circuit, verbose =  False)
     
 
-#     lengths2 = simulator.msm_lengths 
+    simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
+    lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
+
+    simulator = Simulator2(N = n)
+    simulator.simulate(circuit, verbose = False)
+    
+
+    lengths2 = simulator.msm_lengths 
 
 
-#     max_len = (len_L(n, m))
+    max_len = (len_L(n, m))
+
+    # for index in swap_indices:
+    #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
+
+    # for i in range(m):
+    #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
+    axs[1][0].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
+
+    axs[1][0].set_title(r'(c)')
+    axs[1][0].plot(lengths1, color = 'blue', label ='Interaction' )
+    axs[1][0].plot(lengths2, color = 'red', label ='Heisenberg')
+    axs[1][0].set_ylabel(r'Pauli rank',fontsize = 12)
+    axs[1][0].set_xlabel(r'Gate Number',fontsize = 12)
+    axs[1][0].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
+    axs[1][0].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1][0].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
+    axs[1][0].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
+    # axs[1][0].legend()
+    # plt.show()
+
+    #Plot 4: High Swaps O(1), High gates O(N)
+
+    
+    N,n,m = 10,qubits,3
+
+    circuit = sparse_layered_circuit(N,n,m, N_layers = 4)
+
+    types = np.array([i[0] for i in circuit[::-1]])
+    swap_indices = np.where(types=='SWAP')
+
+    simulator = Simulator3(N = n)
+    simulator.simulate(circuit, verbose =  False)
+    
+
+    simulator.rho_lengths[-1] = simulator.msm_lengths[-1]
+    lengths1 = simulator.msm_lengths + simulator.rho_lengths[::-1]
+
+    simulator = Simulator2(N = n)
+    simulator.simulate(circuit, verbose = False)
+    
+
+    lengths2 = simulator.msm_lengths 
+
+
+    max_len = (len_L(n, m))
    
 
-#     # for index in swap_indices:
-#     #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
+    # for index in swap_indices:
+    #     axs[0][0].axvline(x = index, ymin = 0, ymax = max_len, color = 'red', linestyle ='-')
 
-#     # for i in range(m):
-#     #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
-#     axs[1][1].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
+    # for i in range(m):
+    #     axs[0][0].axhline(y = len_L(n,i), xmin = 0, xmax = len(lengths1), color = 'red', linestyle = 'dashed')
+    axs[1][1].hlines(y = len_L(n,3), xmin = 0, xmax = len(lengths1), color = 'darkred', linestyles = 'dashed')
 
-#     axs[1][1].set_title((r'(d)'))
-#     axs[1][1].plot(lengths1, color = 'blue', label ='Interaction')
-#     axs[1][1].plot(lengths2, color = 'red', label ='Heisenberg')
-#     # axs[1][1].set_ylabel(r'Pauli rank',fontsize = 12)
-#     axs[1][1].set_xlabel(r'Gate Number',fontsize = 12)
-#     axs[1][1].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
-#     axs[1][1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-#     axs[1][1].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
-#     axs[1][1].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
-#     # axs[1][1].legend()
+    axs[1][1].set_title((r'(d)'))
+    axs[1][1].plot(lengths1, color = 'blue', label ='Interaction')
+    axs[1][1].plot(lengths2, color = 'red', label ='Heisenberg')
+    # axs[1][1].set_ylabel(r'Pauli rank',fontsize = 12)
+    axs[1][1].set_xlabel(r'Gate Number',fontsize = 12)
+    axs[1][1].set_xticks(range(0,len(lengths1),int(len(lengths1)/10)))
+    axs[1][1].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    axs[1][1].fill_between(range(0,len(lengths1)),lengths1, alpha =0.75, color='blue')
+    axs[1][1].fill_between(range(0,len(lengths2)),lengths2, alpha =0.5, color='red')
+    # axs[1][1].legend()
     
-#     # plt.show()
-#     # fig.suptitle('Simulation profile for different saturations')
-#     plt.show()
+    # plt.show()
+    # fig.suptitle('Simulation profile for different saturations')
+    plt.show()
 
+#Figure 4
+def test13():
+    from simulator3 import Simulator3
 
-# def test13():
-#     from simulator3 import Simulator3
+    N = 40
+    n = 20
+    n_swaps = 5
 
-#     N = 40
-#     n = 20
-#     n_swaps = 5
+    circuit = layered_circuit(N, n, n_swaps)
+    types = np.array([i[0] for i in circuit[::-1]])
+    # print(types)
+    swap_indices = np.where(types=='SWAP')[0]
+    # print(swap_indices)
 
-#     circuit = layered_circuit(N, n, n_swaps)
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     # print(types)
-#     swap_indices = np.where(types=='SWAP')[0]
-#     # print(swap_indices)
-
-#     simulator = Simulator3(n)
+    simulator = Simulator3(n)
     
-#     simulator.simulate(circuit, verbose = True)
+    simulator.simulate(circuit, verbose = True)
 
 
-#     # # for index in swap_indices:
-#     # #     plt.vlines(x = index, ymin = 0, ymax = max_len, linestyles ='dashed')
+    # # for index in swap_indices:
+    # #     plt.vlines(x = index, ymin = 0, ymax = max_len, linestyles ='dashed')
 
-#     # # for i in range(n_swaps):
-#     # #     plt.hlines(y = len_L(n,i), xmin = 0, xmax = len(simulator.msm_lengths), color = 'red', linestyles = 'dashed')
-#     # # plt.hlines(y = len_L(2*n_sites,10), xmin = 0, xmax = len(simulator.lengths), color = 'darkred', linestyles = 'dashed')
+    # # for i in range(n_swaps):
+    # #     plt.hlines(y = len_L(n,i), xmin = 0, xmax = len(simulator.msm_lengths), color = 'red', linestyles = 'dashed')
+    # # plt.hlines(y = len_L(2*n_sites,10), xmin = 0, xmax = len(simulator.lengths), color = 'darkred', linestyles = 'dashed')
     
-#     np.save('staircase.npy', simulator.msm_lengths)
+    np.save('staircase.npy', simulator.msm_lengths)
     
-#     # print(len(simulator.msm_lengths))
+    # print(len(simulator.msm_lengths))
    
 
-# # test13()
+def plot_staircase():
 
-# def plot_staircase():
-
-#     N = 60
-#     n = 31
-#     n_swaps = 10
-#     circuit = layered_circuit(N, n, n_swaps)
-#     types = np.array([i[0] for i in circuit[::-1]])
-#     swap_indices = np.where(types=='SWAP')[0]
-#     values = [len_L(n,i) for i in range(len(swap_indices)+1)]
-#     edges = [0] + list(swap_indices) + [len(circuit)]
-#     plt.stairs(values = values, edges = edges, fill = True, alpha = 0.3)
-#     lengths = np.load('staircase.npy')
-#     plt.plot(lengths)
-#     plt.ylabel(r'Pauli rank',fontsize=12)
-#     plt.xlabel(r'Gate Number',fontsize=12)
-#     plt.xticks(range(0,len(lengths),int(len(lengths)/10)))
-#     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-#     plt.show()
+    N = 60
+    n = 31
+    n_swaps = 10
+    circuit = layered_circuit(N, n, n_swaps)
+    types = np.array([i[0] for i in circuit[::-1]])
+    swap_indices = np.where(types=='SWAP')[0]
+    values = [len_L(n,i) for i in range(len(swap_indices)+1)]
+    edges = [0] + list(swap_indices) + [len(circuit)]
+    plt.stairs(values = values, edges = edges, fill = True, alpha = 0.3)
+    lengths = np.load('staircase.npy')
+    plt.plot(lengths)
+    plt.ylabel(r'Pauli rank',fontsize=12)
+    plt.xlabel(r'Gate Number',fontsize=12)
+    plt.xticks(range(0,len(lengths),int(len(lengths)/10)))
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+    plt.show()
 
 # # plot_staircase()
 
