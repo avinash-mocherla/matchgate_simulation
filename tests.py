@@ -6,6 +6,7 @@ from sqlite3 import TimestampFromTicks
 from matplotlib import offsetbox
 from numpy import average
 from simulator import Simulator
+from simulator2 import Simulator2
 from simulator3 import Simulator3
 from simulator4 import Simulator4
 from simulator5 import Simulator5

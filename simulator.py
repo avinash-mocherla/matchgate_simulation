@@ -17,6 +17,10 @@ Simulator3 exactly.
 
 Public API:
     Simulator(N)          -- the canonical exact simulator (use this)
+    pauli_index(s)        -- 'ZII' -> int64 index used internally for Pauli strings
+    pauli_vector(obs)     -- 'ZII' or {'ZII': 0.5, 'XXI': 0.5} -> typed-Dict vector
+    support_bound(N, s)   -- worst-case Pauli-support size for s CZ/SWAP gates
+    CircuitComplexityError -- raised when a circuit exceeds the max_terms guardrail
     SimulatorOpt          -- alias of Simulator, kept for the analysis/ harness
 
 For the approximate (magnitude-thresholded) and rank-tracking variants, see
@@ -24,6 +28,7 @@ simulator4.Simulator4 and simulator5.Simulator5. For the one-sided Heisenberg-on
 variant used in the Figure 6 rank-growth comparison, see simulator2.Simulator2.
 """
 import itertools
+import math
 import numpy as np
 from circuit_utils import (linear, quadratic, cubic, linear_cz, quadratic_cz, cubic_cz,
                            linear_basis, quadratic_basis, cubic_basis,
@@ -130,6 +135,62 @@ def expectation(measurement_vector, rho_vector):
     return acc
 
 
+class CircuitComplexityError(Exception):
+    """Raised when a circuit's worst-case cost exceeds the max_terms guardrail."""
+
+
+#: Default cap on Pauli-vector terms (per side). 2**24 ~ 17M typed-dict entries
+#: ~ a few GB of RAM. Pass max_terms=... to simulate() to raise it, or
+#: max_terms=None to disable the guardrail entirely.
+MAX_TERMS_DEFAULT = 2 ** 24
+
+
+def support_bound(N, num_swaps):
+    """Worst-case Pauli support per MITM side: chi = sum_i C(2N, 2i+2).
+
+    Cost is exponential in the number of non-matchgate gates (CZ/CPhase/SWAP),
+    not in qubit count. The meet-in-the-middle split absorbs about half of
+    them on each side, hence m = ceil(num_swaps / 2). Capped at 4**N (the
+    full Pauli basis), so small-N circuits are never rejected.
+    """
+    m = (num_swaps + 1) // 2
+    chi = sum(math.comb(2 * N, 2 * i + 2) for i in range(m + 1))
+    return min(chi, 4 ** N)
+
+
+_PAULI_DIGIT = {'I': 0, 'X': 1, 'Y': 2, 'Z': 3}
+
+
+def pauli_index(pauli_string):
+    """Map a Pauli string like 'ZII' (qubit 0 first) to its int64 vector index.
+
+    Each qubit is a base-4 digit (I=0, X=1, Y=2, Z=3); qubit 0 is the most
+    significant digit, so for N qubits: index = sum_q digit(q) * 4**(N-1-q).
+    """
+    idx = 0
+    for ch in pauli_string.upper():
+        idx = idx * 4 + _PAULI_DIGIT[ch]
+    return np.int64(idx)
+
+
+def pauli_vector(observable):
+    """Build a typed-Dict Pauli vector from a friendly observable spec.
+
+    Accepts a single Pauli string ('ZII'), a dict of real linear combinations
+    ({'ZII': 0.5, 'XXI': 0.5}), or a dict keyed by precomputed integer indices.
+    Identity coefficients are not supported (tr(rho)=1 terms cancel in <O>).
+    """
+    if isinstance(observable, str):
+        observable = {observable: 1.0}
+    vec = Dict.empty(key_type=types.int64, value_type=types.float64)
+    for key, coeff in observable.items():
+        idx = pauli_index(key) if isinstance(key, str) else np.int64(key)
+        if idx == 0:
+            raise ValueError("identity term not supported in a Pauli vector")
+        vec[idx] = float(coeff)
+    return vec
+
+
 _BASIS_STACK = {}  # cache the (k,4,4) stacked basis arrays
 
 
@@ -171,8 +232,25 @@ class Simulator:
             sv[i] = 1.0
         return sv
 
-    def simulate(self, circuit, measurement_vector=None, rho_vector=None, verbose=False):
+    def simulate(self, circuit, measurement_vector=None, rho_vector=None, verbose=False,
+                 max_terms=MAX_TERMS_DEFAULT):
+        # plug-and-play: accept a Pauli string or {pauli_string: coeff} dict
+        if measurement_vector is not None and not isinstance(measurement_vector, Dict):
+            measurement_vector = pauli_vector(measurement_vector)
+        if rho_vector is not None and not isinstance(rho_vector, Dict):
+            rho_vector = pauli_vector(rho_vector)
         self.num_swaps = sum(1 for i in circuit if i[0] in ('SWAP', 'CZ'))
+        if max_terms is not None:
+            bound = support_bound(self.N, self.num_swaps)
+            if bound > max_terms:
+                raise CircuitComplexityError(
+                    f"Circuit is too complex to simulate exactly: N={self.N} qubits with "
+                    f"{self.num_swaps} non-matchgate gates (CZ/CPhase/SWAP) has a worst-case "
+                    f"Pauli support of ~{bound:.2e} terms per side, above max_terms={max_terms:.2e}. "
+                    f"Each CZ/SWAP multiplies the cost; matchgates ('MG') are nearly free. "
+                    f"Options: reduce CZ/SWAP count, pass max_terms=<bigger int> if you have the "
+                    f"RAM (~100 bytes/term), pass max_terms=None to disable this check, or use "
+                    f"the approximate simulator4.Simulator4 with a magnitude threshold.")
         if rho_vector is None:
             rho_vector = self.init_statevector()
             self.rho_lengths.append(len(rho_vector))
@@ -187,6 +265,13 @@ class Simulator:
         while (xi + xj) <= self.num_gates - 1:
             if verbose:
                 print('Progress:', np.round((xi + xj) / self.num_gates, 2) * 100, '%')
+            if max_terms is not None and min(len(measurement_vector), len(rho_vector)) > max_terms:
+                raise CircuitComplexityError(
+                    f"Aborting mid-simulation: after {xi + xj}/{self.num_gates} gates both Pauli "
+                    f"vectors exceed max_terms={max_terms:.2e} "
+                    f"(measurement: {len(measurement_vector)}, rho: {len(rho_vector)} terms). "
+                    f"Pass a larger max_terms (or max_terms=None) to push on, or use the "
+                    f"approximate simulator4.Simulator4.")
             if len(measurement_vector) <= len(rho_vector):
                 self.apply_gate(measurement_vector, -(xj + 1), flag=1)
                 xj += 1
