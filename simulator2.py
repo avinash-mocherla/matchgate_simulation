@@ -1,6 +1,16 @@
+"""
+One-sided Heisenberg-picture matchgate simulator (Simulator2).
 
+Unlike the exact meet-in-the-middle ``simulator.Simulator``, this variant pushes
+every gate onto the measurement vector (no MITM split), so its Pauli rank grows
+to the full single-sided support. It exists for the Figure 6 rank-growth
+comparison in tests.py (test12), where its ``msm_lengths`` are plotted as the
+"Heisenberg" curve against the exact simulator's "Interaction" curve.
+
+Not an exact-expectation simulator on its own in the figures: it is used purely
+to trace rank growth. For exact expectation values use simulator.Simulator.
+"""
 import itertools
-from zlib import ZLIB_RUNTIME_VERSION
 
 import numpy as np
 from tqdm import tqdm
@@ -78,33 +88,24 @@ def get_orbit(N, index,q):
 @njit(cache=True)
 def get_cz_orbit(N, index,q1,q2):
     quotient = index
-    print('quotient', quotient)
     binary_string = np.zeros(2*N, dtype = np.int64)
 
     i = 1
-    print(q1,q2)
 
     while quotient > 0:
         quotient, remainder = divmod(quotient,2)
         binary_string[-i] = remainder
-        i+=1 
-    print('binary_string', binary_string)
+        i+=1
     subspace_group1 = bin_to_int_cz(binary_string[2*q1:2*q1+2])
-    print('sg1',subspace_group1)
     subspace_group2 = bin_to_int_cz(binary_string[2*q2:2*q2+2])
-    print('sg2',subspace_group2)
     subspace_group = np.int64(subspace_group1*4 + subspace_group2)
-    print('subspace group', subspace_group)
 
     multiplier1 = np.int64(4** (N-q1-1))
     multiplier2 = np.int64(4** (N-q2-1))
-    print('multiplier', multiplier1,multiplier2)
 
     subspace = np.int64((subspace_group1 * multiplier1) + (subspace_group2 * multiplier2))
-    print('subspace', subspace)
 
     stem = np.int64(index - subspace)
-    print('stem', stem)
 
     if subspace_group in linear_cz:
         return 0,stem + (multiplier1 * np.array([0,0,3,3],dtype = np.int64) + multiplier2 *np.array([1,2,1,2],dtype = np.int64))
@@ -145,8 +146,7 @@ def main_loop_cz(N,q1,q2,dict,R0,R1,R2,flag):
         if index not in visited_indices:
 
             orbit = get_cz_orbit(N, index, q1,q2)
-            print(orbit)
-  
+
             visited_indices.update(orbit[1])
 
             if orbit[0] != 3:
@@ -202,8 +202,8 @@ def expectation(measurement_vector, rho_vector):
     return dot
 
 
-class Simulator3:
-    
+class Simulator2:
+
     def __init__(self, N):
         self.N = N
         # self.lengths = [1]
