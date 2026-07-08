@@ -500,7 +500,7 @@ def plot_Figure8():
     # print(np.average(ratios1), np.std(ratios1))
 
     # ranks5, times5 = np.load('MG5r1.npy'), np.load('MG5r1times.npy')
-    time_offset = 0.001  # keep timing plots away from exact zero values
+    time_offset = 0.001  # avoid exact zeros that break the intended log-scale timing plot
     ranks5 = sum([np.load(npy_path(f'MG5r{r}.npy')) for r in range(3)])/3 
     times5 = sum([np.load(npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + time_offset
     times5[2][0] = 2e-3
