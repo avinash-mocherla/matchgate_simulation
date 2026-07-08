@@ -119,7 +119,7 @@ The `measurement_vector` argument (2nd positional) accepts, in order of convenie
 | `simulator5.py` | rank-tracking-only variant |
 | `tests.py` | figure-generating scripts for the paper (long-running) |
 | `analysis/` | validation (`validate.py`, `validate_cz.py`), benchmarks (`bench.py`, `compare.py`), notes (`ANALYSIS.md`) |
-| `*.npy` | cached data behind the paper's figures |
+| `data/*.npy` | cached data behind the paper's figures |
 
 ## How it works (one paragraph)
 

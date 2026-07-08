@@ -15,6 +15,11 @@ from numba import njit, jit
 from numba.typed import Dict
 from numba.core import types
 import os
+
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+
+def _npy_path(filename):
+    return os.path.join(DATA_DIR, filename)
   
 @njit(cache = True)
 def dot(b, A):
@@ -227,17 +232,17 @@ class Simulator4:
     def init_statevector(self):
         
         if self.num_swaps > self.N - 2:
-
-            isFile = os.path.isfile('init'+str(self.N)+'.npy')
+            path = _npy_path('init'+str(self.N)+'.npy')
+            isFile = os.path.isfile(path)
             if isFile:
                 # print('Initial statevector already found!')
-                indices = np.load('init'+str(self.N)+'.npy')
+                indices = np.load(path)
                 # print("Loaded.")
             else: 
                 print('Initial statevector not found...')
                 gen = a()
                 indices = [next(gen) for i in range(2**self.N)]
-                np.save('init'+str(self.N)+'.npy', indices)
+                np.save(path, indices)
                 print("Saved.")
         else:
             Z_indices = [3 * 4**i for i in range(self.N)]
