@@ -18,6 +18,7 @@ import time
 DATA_DIR = Path(__file__).resolve().parent / 'data'
 
 def npy_path(name):
+    """Return the absolute path for a cached NumPy file."""
     return DATA_DIR / name
 
 

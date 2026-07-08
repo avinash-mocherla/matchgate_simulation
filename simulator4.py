@@ -19,6 +19,7 @@ import os
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
 def _npy_path(filename):
+    """Return the absolute path for a cached NumPy file."""
     return os.path.join(DATA_DIR, filename)
   
 @njit(cache = True)
