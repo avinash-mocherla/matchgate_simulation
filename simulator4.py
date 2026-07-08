@@ -14,14 +14,7 @@ import time
 from numba import njit, jit
 from numba.typed import Dict
 from numba.core import types
-import os
-
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-os.makedirs(DATA_DIR, exist_ok=True)
-
-def _npy_path(filename):
-    """Return the absolute path for a cached NumPy file."""
-    return os.path.join(DATA_DIR, filename)
+from data_paths import npy_path
   
 @njit(cache = True)
 def dot(b, A):
@@ -234,9 +227,9 @@ class Simulator4:
     def init_statevector(self):
         
         if self.num_swaps > self.N - 2:
-            path = _npy_path(f'init{self.N}.npy')
-            is_file = os.path.isfile(path)
-            if is_file:
+            path = npy_path(f'init{self.N}.npy')
+            path_exists = path.is_file()
+            if path_exists:
                 # print('Initial statevector already found!')
                 indices = np.load(path)
                 # print("Loaded.")

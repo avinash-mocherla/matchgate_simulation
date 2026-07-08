@@ -1,10 +1,7 @@
     
 import itertools 
-from pathlib import Path
 import numpy as np
-
-DATA_DIR = Path(__file__).resolve().parent / 'data'
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+from data_paths import npy_path
 
 def init_statevector(N):
 
@@ -15,9 +12,9 @@ def init_statevector(N):
         print(i)
         indices.extend([sum(j) for j in itertools.combinations(Z_indices,i)])
 
-    np.save(DATA_DIR / 'init14.npy', np.array(indices))
+    np.save(npy_path('init14.npy'), np.array(indices))
 
 # init_statevector(28)
 
-a = np.load(DATA_DIR / 'init14.npy')
+a = np.load(npy_path('init14.npy'))
 print(len(a))
