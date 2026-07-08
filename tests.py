@@ -18,7 +18,7 @@ import time
 DATA_DIR = Path(__file__).resolve().parent / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-def npy_path(name):
+def _npy_path(name):
     """Return the absolute path for a cached NumPy file."""
     return DATA_DIR / name
 
@@ -251,7 +251,7 @@ def test13():
     # #     plt.hlines(y = len_L(n,i), xmin = 0, xmax = len(simulator.msm_lengths), color = 'red', linestyles = 'dashed')
     # # plt.hlines(y = len_L(2*n_sites,10), xmin = 0, xmax = len(simulator.lengths), color = 'darkred', linestyles = 'dashed')
     
-    np.save(npy_path('staircase.npy'), simulator.msm_lengths)
+    np.save(_npy_path('staircase.npy'), simulator.msm_lengths)
     
     # print(len(simulator.msm_lengths))
    
@@ -267,7 +267,7 @@ def plot_staircase():
     values = [len_L(n,i) for i in range(len(swap_indices)+1)]
     edges = [0] + list(swap_indices) + [len(circuit)]
     plt.stairs(values = values, edges = edges, fill = True, alpha = 0.3)
-    lengths = np.load(npy_path('staircase.npy'))
+    lengths = np.load(_npy_path('staircase.npy'))
     plt.plot(lengths)
     plt.ylabel(r'Pauli rank',fontsize=12)
     plt.xlabel(r'Gate Number',fontsize=12)
@@ -430,8 +430,8 @@ def test11(save_name, n=5):
         times.append(temps0)
         data.append(temps2)
 
-    np.save(npy_path(f'{save_name}.npy'), data)
-    np.save(npy_path(f'{save_name}times.npy'), times)
+    np.save(_npy_path(f'{save_name}.npy'), data)
+    np.save(_npy_path(f'{save_name}times.npy'), times)
 
 import scipy as sp
 # test11('MG15r1', n = 15) 
@@ -507,15 +507,15 @@ def plot_Figure8():
     # print(np.average(ratios1), np.std(ratios1))
 
     # ranks5, times5 = np.load('MG5r1.npy'), np.load('MG5r1times.npy')
-    ranks5 = sum([np.load(npy_path(f'MG5r{r}.npy')) for r in range(3)])/3 
-    times5 = sum([np.load(npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + (0.001)
+    ranks5 = sum([np.load(_npy_path(f'MG5r{r}.npy')) for r in range(3)])/3 
+    times5 = sum([np.load(_npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + (0.001)
     times5[2][0] = 2e-3
     # ranks10, times10 = np.load('MG10.npy'), np.load('MG10times.npy')
-    ranks10 = sum([np.load(npy_path(f'MG10r{r}.npy')) for r in range(2)])/2
-    times10 = sum([np.load(npy_path(f'MG10r{r}times.npy')) for r in range(2)])/2
+    ranks10 = sum([np.load(_npy_path(f'MG10r{r}.npy')) for r in range(2)])/2
+    times10 = sum([np.load(_npy_path(f'MG10r{r}times.npy')) for r in range(2)])/2
 
-    ranks15 = sum([np.load(npy_path(f'MG15r{r}.npy')) for r in range(1)])/1
-    times15 = sum([np.load(npy_path(f'MG15r{r}times.npy')) for r in range(1)])/1
+    ranks15 = sum([np.load(_npy_path(f'MG15r{r}.npy')) for r in range(1)])/1
+    times15 = sum([np.load(_npy_path(f'MG15r{r}times.npy')) for r in range(1)])/1
     
     print(times15)
 
@@ -639,14 +639,14 @@ def error_vs_rank():
             deltas.append(delta)
 
     lines = np.array(deltas).T
-    np.save(npy_path('lines2.npy'), lines)
-    np.save(npy_path('ranks2.npy'), ranks)
+    np.save(_npy_path('lines2.npy'), lines)
+    np.save(_npy_path('ranks2.npy'), ranks)
 
 
 def plot_error_vs_rank():
     thresholds = [1e-2,1e-4,1e-6,1e-8]
-    lines = np.concatenate((np.load(npy_path('lines.npy')), np.load(npy_path('lines1.npy'))), axis = 1)
-    ranks = np.concatenate((np.load(npy_path('ranks.npy')), np.load(npy_path('ranks1.npy'))), axis =0)
+    lines = np.concatenate((np.load(_npy_path('lines.npy')), np.load(_npy_path('lines1.npy'))), axis = 1)
+    ranks = np.concatenate((np.load(_npy_path('ranks.npy')), np.load(_npy_path('ranks1.npy'))), axis =0)
     # print(np.shape(np.load('ranks1.npy')))
  
     for i,line in enumerate(lines): 
