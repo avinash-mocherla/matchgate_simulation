@@ -428,8 +428,8 @@ def test11(save_name, n=5):
         times.append(temps0)
         data.append(temps2)
 
-    np.save(npy_path(save_name+'.npy'), data)
-    np.save(npy_path(save_name+'times'+'.npy'), times)
+    np.save(npy_path(f'{save_name}.npy'), data)
+    np.save(npy_path(f'{save_name}times.npy'), times)
 
 import scipy as sp
 # test11('MG15r1', n = 15) 
@@ -505,15 +505,15 @@ def plot_Figure8():
     # print(np.average(ratios1), np.std(ratios1))
 
     # ranks5, times5 = np.load('MG5r1.npy'), np.load('MG5r1times.npy')
-    ranks5 = sum([np.load(npy_path('MG5r'+ str(r) + '.npy')) for r in range(3)])/3 
-    times5 = sum([np.load(npy_path('MG5r'+ str(r) + 'times.npy')) for r in range(3)])/3 + (0.001)
+    ranks5 = sum([np.load(npy_path(f'MG5r{r}.npy')) for r in range(3)])/3 
+    times5 = sum([np.load(npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + (0.001)
     times5[2][0] = 2e-3
     # ranks10, times10 = np.load('MG10.npy'), np.load('MG10times.npy')
-    ranks10 = sum([np.load(npy_path('MG10r'+ str(r) + '.npy')) for r in range(2)])/2
-    times10 = sum([np.load(npy_path('MG10r'+ str(r) + 'times.npy')) for r in range(2)])/2
+    ranks10 = sum([np.load(npy_path(f'MG10r{r}.npy')) for r in range(2)])/2
+    times10 = sum([np.load(npy_path(f'MG10r{r}times.npy')) for r in range(2)])/2
 
-    ranks15 = sum([np.load(npy_path('MG15r'+ str(r) + '.npy')) for r in range(1)])/1
-    times15 = sum([np.load(npy_path('MG15r'+ str(r) + 'times.npy')) for r in range(1)])/1
+    ranks15 = sum([np.load(npy_path(f'MG15r{r}.npy')) for r in range(1)])/1
+    times15 = sum([np.load(npy_path(f'MG15r{r}times.npy')) for r in range(1)])/1
     
     print(times15)
 

@@ -232,7 +232,7 @@ class Simulator4:
     def init_statevector(self):
         
         if self.num_swaps > self.N - 2:
-            path = _npy_path('init'+str(self.N)+'.npy')
+            path = _npy_path(f'init{self.N}.npy')
             isFile = os.path.isfile(path)
             if isFile:
                 # print('Initial statevector already found!')
