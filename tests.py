@@ -507,8 +507,9 @@ def plot_Figure8():
     # print(np.average(ratios1), np.std(ratios1))
 
     # ranks5, times5 = np.load('MG5r1.npy'), np.load('MG5r1times.npy')
+    time_offset = 0.001
     ranks5 = sum([np.load(_npy_path(f'MG5r{r}.npy')) for r in range(3)])/3 
-    times5 = sum([np.load(_npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + (0.001)
+    times5 = sum([np.load(_npy_path(f'MG5r{r}times.npy')) for r in range(3)])/3 + time_offset
     times5[2][0] = 2e-3
     # ranks10, times10 = np.load('MG10.npy'), np.load('MG10times.npy')
     ranks10 = sum([np.load(_npy_path(f'MG10r{r}.npy')) for r in range(2)])/2

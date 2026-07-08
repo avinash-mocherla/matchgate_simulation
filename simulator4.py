@@ -235,8 +235,8 @@ class Simulator4:
         
         if self.num_swaps > self.N - 2:
             path = _npy_path(f'init{self.N}.npy')
-            isFile = os.path.isfile(path)
-            if isFile:
+            is_file = os.path.isfile(path)
+            if is_file:
                 # print('Initial statevector already found!')
                 indices = np.load(path)
                 # print("Loaded.")
