@@ -17,6 +17,7 @@ from numba.core import types
 import os
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+os.makedirs(DATA_DIR, exist_ok=True)
 
 def _npy_path(filename):
     """Return the absolute path for a cached NumPy file."""

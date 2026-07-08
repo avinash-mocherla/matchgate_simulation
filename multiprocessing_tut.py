@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 
 DATA_DIR = Path(__file__).resolve().parent / 'data'
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 def init_statevector(N):
 
